@@ -1,17 +1,29 @@
-📄 AI Resume Analyzer (Hybrid Evaluation System)
+📄 AI Resume Analyzer — Hybrid Evaluation System
+🎯 Problem Statement
+
+Resume screening is often either:
+
+Manual and time-consuming, or
+
+Fully AI-driven but opaque and non-deterministic.
+
+Pure conversational LLM tools can analyze resumes, but they lack transparency, reproducibility, and structured integration into hiring systems.
+
+This project explores how to build a structured, explainable AI system that evaluates resume–job fit using a hybrid deterministic + LLM architecture.
+
 🚀 Overview
 
-AI Resume Analyzer is a hybrid evaluation system that assesses resume–job fit using a combination of:
+AI Resume Analyzer is a hybrid evaluation system that combines:
 
-Deterministic skill matching (rule-based scoring)
+Deterministic skill-based scoring
 
-LLM-based qualitative evaluation
+LLM-powered qualitative analysis
 
 Weighted final scoring
 
-The system extracts structured information from both a resume and a job description, computes an objective skill match score, and enhances it with contextual evaluation from a large language model.
+The system extracts structured information from both a resume and a job description, computes an objective skill match score, and enhances it with contextual reasoning from a large language model.
 
-This project demonstrates practical GenAI system design beyond simple prompt-based applications.
+The goal is not just resume feedback — but architecturally controlled AI evaluation.
 
 🏗️ Architecture Overview
 
@@ -37,7 +49,7 @@ The system follows a clean 3-layer architecture:
                 │    Weighted Final Score │
                 └─────────────────────────┘
 🔎 System Components
-1️⃣ Structured Extraction Layer (LLM → JSON)
+1️⃣ Structured Extraction (LLM → JSON)
 
 The LLM is used strictly as a structured parser.
 
@@ -55,17 +67,17 @@ Experience summary
 
 Required job skills
 
-All outputs are enforced as JSON and parsed deterministically using json.loads().
+All outputs are enforced as JSON and parsed using json.loads().
 
 Why structured JSON?
 
 Machine-readable
 
+Reduces hallucination risk
+
 Enables deterministic scoring
 
-Prevents fragile string-based logic
-
-Reduces hallucination impact
+Allows downstream system integration
 
 2️⃣ Deterministic Skill Matching (Python Logic)
 
@@ -80,8 +92,18 @@ Substring containment checks
 Match Percentage:
 
 Matched Required Skills / Total Required Skills
+Deterministic Score Formula
+Base Score = Skill Match %
 
-This ensures:
++ 10 points (≥ 3 projects)
++ 5 points (certifications present)
+
+Score is capped at 100.
+
+Why deterministic scoring?
+
+Pure LLM evaluation is non-deterministic and opaque.
+This rule-based layer ensures:
 
 Transparency
 
@@ -89,13 +111,8 @@ Reproducibility
 
 Explainability
 
-Deterministic Score Formula
-Base Score = Skill Match %
+Auditability
 
-+ 10 points (≥ 3 projects)
-+ 5 points (certifications present)
-
-Final Deterministic Score capped at 100
 3️⃣ LLM Qualitative Evaluation
 
 The LLM evaluates:
@@ -106,7 +123,7 @@ Weaknesses
 
 Improvement suggestions
 
-Overall qualitative score (0–100)
+Qualitative score (0–100)
 
 The model receives:
 
@@ -114,33 +131,39 @@ Structured resume data
 
 Required skills
 
-Skill gap results
+Computed skill gap
 
-This avoids reprocessing raw text and improves evaluation consistency.
+It does not reprocess raw resume text unnecessarily.
 
-4️⃣ Final Hybrid Score
+4️⃣ Hybrid Final Score
 
-Final score uses weighted averaging:
+The final score is calculated using weighted averaging:
 
 Final Score = (0.6 × Deterministic Score)
             + (0.4 × LLM Score)
 Why weighted?
 
-Deterministic scoring is objective → higher trust
+Deterministic scoring = objective, stable
 
-LLM evaluation is contextual → nuanced insights
+LLM evaluation = contextual, nuanced
 
-Hybrid approach balances stability and intelligence
+The hybrid design balances:
 
-🖥️ Streamlit UI
+Stability
 
-The application provides a clean dashboard with:
+Explainability
+
+Contextual intelligence
+
+🖥️ Streamlit Interface
+
+The application provides a clean evaluation dashboard:
 
 Deterministic Score
 
 LLM Score
 
-Final Score
+Final Weighted Score
 
 Matched Skills
 
@@ -152,26 +175,27 @@ Weaknesses
 
 Improvement Suggestions
 
-The UI is intentionally minimal to emphasize system logic over styling.
+UI is intentionally minimal to emphasize system logic over styling.
 
 ⚙️ Engineering Decisions
-✔ Hybrid Evaluation Instead of Pure LLM
+✔ Hybrid Instead of Pure LLM
 
-Pure LLM scoring is non-deterministic and opaque.
-Deterministic logic ensures explainability and auditability.
+Pure LLM scoring is opaque and unstable.
+Pure rule-based systems lack contextual reasoning.
+This system intentionally combines both.
 
-✔ Structured JSON Enforcement
+✔ Structured Output Enforcement
 
-Prevents fragile text parsing and enables reliable downstream logic.
+JSON-based prompting ensures machine-readable and parseable results.
 
-✔ Token-Level Skill Matching
+✔ Token-Level Matching
 
-Avoids heavy NLP libraries while improving robustness over exact string matching.
+Avoids heavy NLP pipelines while remaining more robust than exact string matching.
 
 ✔ Fixed 60/40 Weighting
 
 Simple, transparent, and interview-defensible.
-In production, weights could be tuned using hiring outcome data.
+In production, weights could be calibrated using historical hiring data.
 
 ✔ No OCR for Scanned PDFs
 
@@ -186,7 +210,7 @@ Streamlit
 
 PyPDF2
 
-Groq API (OpenAI-compatible)
+OpenAI-compatible Groq API
 
 LLM: openai/gpt-oss-20b
 
@@ -198,7 +222,7 @@ JSON-based structured prompting
 
 pip install -r requirements.txt
 
-2️⃣ Run the app:
+2️⃣ Run the application:
 
 streamlit run app.py
 
@@ -208,34 +232,38 @@ Resume (.pdf or .txt)
 
 Job Description (.txt)
 
-📈 Example Output
-
-Deterministic Score: 81.67
-
-LLM Score: 70
-
-Final Score: 77.0
-
-Skill gap analysis with actionable suggestions
-
 🚧 Current Limitations
 
-No OCR support for scanned PDFs
+No OCR for scanned resumes
 
-Basic token-level skill matching (no embedding similarity)
+Basic token-level skill matching (no semantic embeddings yet)
 
-No ATS keyword weighting system
+Fixed weighting strategy
 
-No persistent storage or authentication
+No persistence or authentication
 
 🔮 Future Improvements
 
 Embedding-based semantic skill matching
 
-Historical hiring data calibration for scoring weights
+Historical data calibration for scoring weights
 
-ATS-style keyword weighting
+Bias monitoring and fairness auditing
 
-OCR integration for scanned resumes
+OCR integration
 
-Export report as PDF
+PDF export of evaluation report
+
+🧠 What This Project Demonstrates
+
+Structured LLM extraction
+
+Deterministic vs probabilistic system design
+
+Hybrid AI architecture
+
+Hallucination control
+
+Explainable scoring systems
+
+Practical GenAI debugging experience
