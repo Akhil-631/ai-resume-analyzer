@@ -1,4 +1,5 @@
-📄 AI Resume Analyzer — Hybrid Evaluation System
+# 📄 AI Resume Analyzer — Hybrid Evaluation System
+
 🎯 Problem Statement
 
 Resume screening is often either:
@@ -24,6 +25,32 @@ Weighted final scoring
 The system extracts structured information from both a resume and a job description, computes an objective skill match score, and enhances it with contextual reasoning from a large language model.
 
 The goal is not just resume feedback — but architecturally controlled AI evaluation.
+
+## 🤖 Why Hybrid AI?
+
+Many AI resume analysis tools rely entirely on large language models.  
+While LLMs provide strong contextual reasoning, relying solely on them introduces several issues:
+
+- **Non-deterministic scoring** – the same resume may produce different evaluations.
+- **Lack of transparency** – it becomes difficult to explain why a candidate received a particular score.
+- **Limited auditability** – hiring systems require traceable decision logic.
+
+Pure rule-based systems, on the other hand, are deterministic and explainable but lack contextual understanding of resumes and projects.
+
+This project intentionally combines both approaches:
+
+| Component | Purpose |
+|----------|--------|
+| **Deterministic Logic** | Ensures transparent, reproducible scoring for skill alignment |
+| **LLM Evaluation** | Provides contextual reasoning about projects, strengths, and improvement areas |
+
+By combining deterministic scoring with LLM reasoning, the system achieves a balance between:
+
+- **Explainability**
+- **Consistency**
+- **Contextual intelligence**
+
+This hybrid architecture is closer to how real-world AI decision-support systems are designed.
 
 🏗️ Architecture Overview
 
